@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS.COM Admin — Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{font-family:'Inter',sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Sora',sans-serif;}
+  body{background:#0f172a;}
+  .glass{ background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+  .grad-text{ background: linear-gradient(90deg,#a78bfa,#818cf8); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sidebar-link{ transition: background .2s ease, color .2s ease; }
+  .sidebar-link.active{ background: rgba(124,58,237,0.18); color:#c4b5fd; border-left:3px solid #7c3aed; }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-track{ background:#0f172a; }
+  ::-webkit-scrollbar-thumb{ background:#4c1d95; border-radius:9999px; }
+  .modal-backdrop{ background: rgba(2,6,23,0.75); backdrop-filter: blur(4px); }
+  table thead th{ position:sticky; top:0; background:#111827; }
+  .status-badge{ padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; white-space:nowrap; }
+</style>
+</head>
+<body class="text-slate-100 antialiased">
+
+<!-- ===================== HALAMAN LOGIN ===================== -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center px-4">
+  <div class="glass rounded-2xl p-8 w-full max-w-sm text-center">
+    <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center font-extrabold text-white text-2xl mb-4">A</div>
+    <h1 class="font-display text-xl font-bold text-white mb-1">AS<span class="grad-text">.COM</span> Admin</h1>
+    <p class="text-slate-400 text-sm mb-6">Masuk untuk mengelola jasa dan order masuk.</p>
+    <button id="googleLoginBtn" class="w-full flex items-center justify-center gap-3 bg-white text-slate-800 font-semibold py-3 rounded-xl hover:bg-slate-100 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="h-5 w-5">
+        <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
+        <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
+        <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/>
+        <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
+      </svg>
+      Masuk dengan Google
+    </button>
+    <p id="loginError" class="hidden text-red-400 text-xs mt-4"></p>
+  </div>
+</div>
+
+<!-- ===================== DASHBOARD (TERSEMBUNYI SEBELUM LOGIN) ===================== -->
+<div id="dashboardScreen" class="hidden min-h-screen flex flex-col md:flex-row">
+
+  <!-- Sidebar -->
+  <aside class="md:w-64 w-full glass md:min-h-screen">
+    <div class="flex items-center justify-between md:justify-start gap-3 px-5 py-5 border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center font-extrabold text-white">A</span>
+        <span class="font-display font-bold text-white">AS<span class="grad-text">.COM</span> Admin</span>
+      </div>
+    </div>
+    <nav class="flex md:flex-col overflow-x-auto md:overflow-visible">
+      <a href="#" data-tab="tabJasa" class="sidebar-link active flex-shrink-0 flex items-center gap-3 px-5 py-3 text-sm font-medium text-slate-300">
+        Manajemen Jasa
+      </a>
+      <a href="#" data-tab="tabOrder" class="sidebar-link flex-shrink-0 flex items-center gap-3 px-5 py-3 text-sm font-medium text-slate-300">
+        Order Masuk
+      </a>
+    </nav>
+    <div class="hidden md:block mt-auto px-5 py-5 border-t border-white/10 absolute bottom-0 w-64">
+      <p id="adminEmailLabel" class="text-xs text-slate-400 truncate mb-3"></p>
+      <button id="logoutBtn" class="w-full bg-red-600/20 hover:bg-red-600/40 text-red-300 text-sm font-semibold py-2 rounded-xl transition">Log Out</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-1 p-4 sm:p-6 lg:p-8">
+    <div class="flex items-center justify-between mb-6 md:hidden">
+      <p id="adminEmailLabelMobile" class="text-xs text-slate-400 truncate"></p>
+      <button id="logoutBtnMobile" class="bg-red-600/20 hover:bg-red-600/40 text-red-300 text-xs font-semibold px-3 py-2 rounded-xl transition">Log Out</button>
+    </div>
+
+    <!-- TAB: MANAJEMEN JASA -->
+    <section id="tabJasa" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h2 class="font-display text-xl font-bold text-white">Manajemen Jasa</h2>
+        <button id="openAddJasaModal" class="btn-add bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition">+ Tambah Jasa Baru</button>
+      </div>
+
+      <div class="glass rounded-2xl overflow-x-auto">
+        <table class="w-full min-w-[720px] text-sm">
+          <thead>
+            <tr class="text-left text-slate-400 border-b border-white/10">
+              <th class="px-4 py-3">Nama Jasa</th>
+              <th class="px-4 py-3">Kategori</th>
+              <th class="px-4 py-3">Harga</th>
+              <th class="px-4 py-3">Deskripsi</th>
+              <th class="px-4 py-3 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="jasaTableBody" class="divide-y divide-white/5">
+            <tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB: ORDER MASUK -->
+    <section id="tabOrder" class="space-y-6 hidden">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-xl font-bold text-white">Order Masuk</h2>
+        <button id="refreshOrderBtn" class="text-xs font-semibold px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition">Segarkan</button>
+      </div>
+
+      <div class="glass rounded-2xl overflow-x-auto">
+        <table class="w-full min-w-[900px] text-sm">
+          <thead>
+            <tr class="text-left text-slate-400 border-b border-white/10">
+              <th class="px-4 py-3">Nama Klien</th>
+              <th class="px-4 py-3">No. WA</th>
+              <th class="px-4 py-3">Deskripsi Brief</th>
+              <th class="px-4 py-3">Item Jasa</th>
+              <th class="px-4 py-3">Total</th>
+              <th class="px-4 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody id="orderTableBody" class="divide-y divide-white/5">
+            <tr><td colspan="6" class="px-4 py-6 text-center text-slate-500">Memuat data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===================== MODAL TAMBAH JASA ===================== -->
+<div id="addJasaModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div id="addJasaBackdrop" class="absolute inset-0 modal-backdrop"></div>
+  <div class="relative bg-slate-900 border border-white/10 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 md:p-8">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-display text-lg font-bold text-white">Tambah Jasa Baru</h3>
+      <button id="closeAddJasaModal" class="p-2 rounded-lg hover:bg-white/10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+    <form id="jasaForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Nama Jasa</label>
+        <input required id="jNama" type="text" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Kategori</label>
+        <select required id="jKategori" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+          <option value="">Pilih kategori</option>
+          <option value="Website">Website</option>
+          <option value="Desain Grafis">Desain Grafis</option>
+          <option value="Joki Tugas">Joki Tugas</option>
+          <option value="Bimbingan Belajar">Bimbingan Belajar</option>
+          <option value="Digital Marketing">Digital Marketing</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Harga (Rp)</label>
+        <input required id="jHarga" type="number" min="0" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Deskripsi</label>
+        <textarea required id="jDeskripsi" rows="3" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">URL Gambar</label>
+        <input id="jGambar" type="url" placeholder="https://..." class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+      </div>
+      <button type="submit" id="saveJasaBtn" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 rounded-xl transition">Simpan Jasa</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] hidden">
+  <div class="glass rounded-xl px-5 py-3 text-sm text-white shadow-xl"></div>
+</div>
+
+<script>
+/* ============ KONFIGURASI SUPABASE ============ */
+const SUPABASE_URL = "URL_SUPABASE";
+const SUPABASE_ANON_KEY = "ANON_KEY_SUPABASE";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* Email admin yang diizinkan mengakses dashboard */
+const ALLOWED_ADMIN_EMAIL = "email-admin-anda@gmail.com";
+
+/* ============ UTIL ============ */
+function formatRupiah(num){
+  return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
+}
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.querySelector('div').textContent = msg;
+  toast.classList.remove('hidden');
+  setTimeout(()=> toast.classList.add('hidden'), 2800);
+}
+
+const loginScreen = document.getElementById('loginScreen');
+const dashboardScreen = document.getElementById('dashboardScreen');
+const loginError = document.getElementById('loginError');
+
+/* ============ LOGIN GOOGLE OAUTH ============ */
+document.getElementById('googleLoginBtn').addEventListener('click', async ()=>{
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+  if(error){
+    loginError.textContent = 'Gagal memulai proses login: ' + error.message;
+    loginError.classList.remove('hidden');
+  }
+});
+
+/* ============ VALIDASI SESI & EMAIL ADMIN ============ */
+async function checkSession(){
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if(!session){
+    showLogin();
+    return;
+  }
+
+  const email = session.user.email;
+
+  if(email !== ALLOWED_ADMIN_EMAIL){
+    loginError.textContent = `Akun (${email}) tidak memiliki akses admin. Anda akan logout otomatis.`;
+    loginError.classList.remove('hidden');
+    await supabaseClient.auth.signOut();
+    showLogin();
+    return;
+  }
+
+  document.getElementById('adminEmailLabel').textContent = email;
+  document.getElementById('adminEmailLabelMobile').textContent = email;
+  showDashboard();
+  loadJasa();
+  loadOrder();
+}
+
+function showLogin(){
+  loginScreen.classList.remove('hidden');
+  dashboardScreen.classList.add('hidden');
+}
+function showDashboard(){
+  loginScreen.classList.add('hidden');
+  dashboardScreen.classList.remove('hidden');
+  dashboardScreen.classList.add('md:flex');
+}
+
+supabaseClient.auth.onAuthStateChange((_event, _session)=>{
+  checkSession();
+});
+
+/* ============ LOGOUT ============ */
+async function doLogout(){
+  await supabaseClient.auth.signOut();
+  showLogin();
+}
+document.getElementById('logoutBtn').addEventListener('click', doLogout);
+document.getElementById('logoutBtnMobile').addEventListener('click', doLogout);
+
+/* ============ TAB SWITCH ============ */
+document.querySelectorAll('.sidebar-link').forEach(link=>{
+  link.addEventListener('click', (e)=>{
+    e.preventDefault();
+    document.querySelectorAll('.sidebar-link').forEach(l=> l.classList.remove('active'));
+    link.classList.add('active');
+    const target = link.getAttribute('data-tab');
+    document.getElementById('tabJasa').classList.toggle('hidden', target !== 'tabJasa');
+    document.getElementById('tabOrder').classList.toggle('hidden', target !== 'tabOrder');
+  });
+});
+
+/* ============ MODAL TAMBAH JASA ============ */
+const addJasaModal = document.getElementById('addJasaModal');
+document.getElementById('openAddJasaModal').addEventListener('click', ()=>{
+  addJasaModal.classList.remove('hidden');
+  addJasaModal.classList.add('flex');
+});
+function closeAddJasaModal(){
+  addJasaModal.classList.add('hidden');
+  addJasaModal.classList.remove('flex');
+  document.getElementById('jasaForm').reset();
+}
+document.getElementById('closeAddJasaModal').addEventListener('click', closeAddJasaModal);
+document.getElementById('addJasaBackdrop').addEventListener('click', closeAddJasaModal);
+
+/* ============ TAMBAH JASA -> SUPABASE ============ */
+document.getElementById('jasaForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const saveBtn = document.getElementById('saveJasaBtn');
+  const payload = {
+    nama_jasa: document.getElementById('jNama').value.trim(),
+    kategori: document.getElementById('jKategori').value,
+    harga: Number(document.getElementById('jHarga').value),
+    deskripsi: document.getElementById('jDeskripsi').value.trim(),
+    gambar_url: document.getElementById('jGambar').value.trim()
+  };
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Menyimpan...';
+
+  try{
+    const { error } = await supabaseClient.from('produk').insert([payload]);
+    if(error) throw error;
+    showToast('Jasa berhasil ditambahkan.');
+    closeAddJasaModal();
+    loadJasa();
+  }catch(err){
+    console.error(err);
+    showToast('Gagal menyimpan jasa: ' + err.message);
+  }finally{
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Simpan Jasa';
+  }
+});
+
+/* ============ LOAD & RENDER TABEL JASA ============ */
+async function loadJasa(){
+  const tbody = document.getElementById('jasaTableBody');
+  tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">Memuat data...</td></tr>`;
+  try{
+    const { data, error } = await supabaseClient
+      .from('produk')
+      .select('*')
+      .order('created_at', { ascending:false });
+    if(error) throw error;
+
+    if(!data || data.length === 0){
+      tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">Belum ada jasa yang terdaftar.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    data.forEach(item=>{
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-white/5";
+      tr.innerHTML = `
+        <td class="px-4 py-3 font-medium text-white whitespace-nowrap">${item.nama_jasa}</td>
+        <td class="px-4 py-3 text-slate-300 whitespace-nowrap">${item.kategori || '-'}</td>
+        <td class="px-4 py-3 text-violet-300 font-semibold whitespace-nowrap">${formatRupiah(item.harga)}</td>
+        <td class="px-4 py-3 text-slate-400 max-w-xs truncate">${item.deskripsi || '-'}</td>
+        <td class="px-4 py-3 text-right">
+          <button data-id="${item.id}" class="deleteJasaBtn bg-red-600/20 hover:bg-red-600/40 text-red-300 text-xs font-semibold px-3 py-2 rounded-lg transition">Hapus</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.deleteJasaBtn').forEach(btn=>{
+      btn.addEventListener('click', ()=> deleteJasa(btn.getAttribute('data-id')));
+    });
+
+  }catch(err){
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-red-400">Gagal memuat data jasa.</td></tr>`;
+  }
+}
+
+async function deleteJasa(id){
+  if(!confirm('Yakin ingin menghapus jasa ini?')) return;
+  try{
+    const { error } = await supabaseClient.from('produk').delete().eq('id', id);
+    if(error) throw error;
+    showToast('Jasa berhasil dihapus.');
+    loadJasa();
+  }catch(err){
+    console.error(err);
+    showToast('Gagal menghapus jasa: ' + err.message);
+  }
+}
+
+/* ============ LOAD & RENDER TABEL ORDER ============ */
+async function loadOrder(){
+  const tbody = document.getElementById('orderTableBody');
+  tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-500">Memuat data...</td></tr>`;
+  try{
+    const { data, error } = await supabaseClient
+      .from('pesanan')
+      .select('*')
+      .order('created_at', { ascending:false });
+    if(error) throw error;
+
+    if(!data || data.length === 0){
+      tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-500">Belum ada order masuk.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    data.forEach(order=>{
+      const items = Array.isArray(order.item_jasa) ? order.item_jasa : [];
+      const itemsText = items.map(i=> `${i.nama_jasa} (x${i.qty})`).join(', ');
+      const statusColor = order.status === 'Selesai'
+        ? 'bg-emerald-500/20 text-emerald-300'
+        : order.status === 'Diproses'
+        ? 'bg-amber-500/20 text-amber-300'
+        : 'bg-slate-500/20 text-slate-300';
+
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-white/5";
+      tr.innerHTML = `
+        <td class="px-4 py-3 font-medium text-white whitespace-nowrap">${order.nama_klien}</td>
+        <td class="px-4 py-3 text-slate-300 whitespace-nowrap">${order.no_wa}</td>
+        <td class="px-4 py-3 text-slate-400 max-w-xs truncate" title="${(order.deskripsi_brief||'').replace(/"/g,'&quot;')}">${order.deskripsi_brief || '-'}</td>
+        <td class="px-4 py-3 text-slate-400 max-w-xs truncate" title="${itemsText.replace(/"/g,'&quot;')}">${itemsText || '-'}</td>
+        <td class="px-4 py-3 text-violet-300 font-semibold whitespace-nowrap">${formatRupiah(order.total_harga)}</td>
+        <td class="px-4 py-3 whitespace-nowrap"><span class="status-badge ${statusColor}">${order.status || 'Menunggu Konfirmasi'}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+  }catch(err){
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-red-400">Gagal memuat data order.</td></tr>`;
+  }
+}
+
+document.getElementById('refreshOrderBtn').addEventListener('click', loadOrder);
+
+/* ============ REALTIME ORDER MASUK ============ */
+supabaseClient
+  .channel('pesanan-realtime')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'pesanan' }, ()=>{
+    loadOrder();
+  })
+  .subscribe();
+
+/* ============ INIT ============ */
+checkSession();
+</script>
+</body>
+</html>
