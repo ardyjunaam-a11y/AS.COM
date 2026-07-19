@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS.COM — Jasa Digital & Edukasi</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root{
+    --deep:#0b0f2e;
+    --indigo:#1e1b4b;
+    --violet:#7c3aed;
+    --violet2:#a78bfa;
+    --slate:#0f172a;
+  }
+  *{font-family:'Inter',sans-serif;}
+  h1,h2,h3,.font-display{font-family:'Sora',sans-serif;}
+  body{background:var(--slate); scroll-behavior:smooth;}
+  .bg-hero{
+    background:
+      radial-gradient(circle at 15% 20%, rgba(124,58,237,0.35), transparent 40%),
+      radial-gradient(circle at 85% 10%, rgba(99,102,241,0.30), transparent 45%),
+      linear-gradient(180deg, #0b0f2e 0%, #0f172a 100%);
+  }
+  .glass{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+  }
+  .card-hover{ transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+  .card-hover:hover{ transform: translateY(-6px); box-shadow: 0 20px 40px -20px rgba(124,58,237,0.5); border-color: rgba(167,139,250,0.5); }
+  .grad-text{
+    background: linear-gradient(90deg, #a78bfa, #818cf8, #38bdf8);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .btn-primary{
+    background: linear-gradient(90deg,#7c3aed,#4f46e5);
+    transition: filter .2s ease, transform .2s ease;
+  }
+  .btn-primary:hover{ filter:brightness(1.15); transform: translateY(-1px); }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-track{ background:#0f172a; }
+  ::-webkit-scrollbar-thumb{ background:#4c1d95; border-radius:9999px; }
+  .modal-backdrop{ background: rgba(2,6,23,0.75); backdrop-filter: blur(4px); }
+  .mobile-menu{ transition: max-height .3s ease, opacity .3s ease; }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-12px);} }
+  .floaty{ animation: floaty 4s ease-in-out infinite; }
+</style>
+</head>
+<body class="text-slate-100 antialiased">
+
+<!-- ===================== NAVBAR ===================== -->
+<header class="sticky top-0 z-40 glass">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="#home" class="flex items-center gap-2 font-display font-800 text-xl">
+        <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center font-extrabold text-white">A</span>
+        <span class="text-white font-extrabold tracking-tight">AS<span class="grad-text">.COM</span></span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <a href="#home" class="hover:text-violet-300 transition">Beranda</a>
+        <a href="#katalog" class="hover:text-violet-300 transition">Katalog Jasa</a>
+        <a href="#tentang" class="hover:text-violet-300 transition">Tentang</a>
+        <a href="#kontak" class="hover:text-violet-300 transition">Kontak</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div id="authArea" class="hidden md:flex items-center gap-2"></div>
+        <button id="cartBtn" type="button" class="relative p-2 rounded-lg hover:bg-white/10 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 1.907-4.706 2.348-7.183.075-.425-.183-.842-.66-.842H5.106M7.5 14.25L5.106 5.25M7.5 14.25L5.856 17.25m10.394-3.615A3.75 3.75 0 105.856 17.25m9.394-3.615L17.25 14.25" />
+          </svg>
+          <span id="cartBadge" class="absolute -top-1 -right-1 bg-violet-600 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+        </button>
+        <button id="menuToggle" type="button" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="mobile-menu md:hidden overflow-hidden max-h-0 opacity-0">
+      <div class="flex flex-col gap-1 pb-4 text-sm font-medium text-slate-300">
+        <a href="#home" class="px-2 py-2 rounded-lg hover:bg-white/10">Beranda</a>
+        <a href="#katalog" class="px-2 py-2 rounded-lg hover:bg-white/10">Katalog Jasa</a>
+        <a href="#tentang" class="px-2 py-2 rounded-lg hover:bg-white/10">Tentang</a>
+        <a href="#kontak" class="px-2 py-2 rounded-lg hover:bg-white/10">Kontak</a>
+        <div id="authAreaMobile" class="px-2 pt-2 mt-1 border-t border-white/10"></div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section id="home" class="bg-hero relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+    <div>
+      <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-violet-500/15 text-violet-300 border border-violet-500/30 mb-5">
+        Studio Digital & Edukasi Terpercaya
+      </span>
+      <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight text-white mb-5">
+        Wujudkan Ide Digital & <span class="grad-text">Belajar Lebih Cepat</span> Bersama AS.COM
+      </h1>
+      <p class="text-slate-300 text-base md:text-lg mb-8 max-w-xl">
+        Dari pembuatan website, desain, joki tugas, hingga bimbingan belajar — kami bantu proyekmu selesai dengan cepat, rapi, dan profesional.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="#katalog" class="btn-primary text-white font-semibold px-6 py-3 rounded-xl text-center shadow-lg shadow-violet-900/40">
+          Eksplor Jasa
+        </a>
+        <a href="https://wa.me/62895405202682?text=Halo%20Admin%20AS.COM%2C%20saya%20ingin%20konsultasi%20mengenai%20jasa%20yang%20tersedia." target="_blank" rel="noopener" class="border border-white/20 text-slate-100 font-semibold px-6 py-3 rounded-xl text-center hover:bg-white/5 transition">
+          Konsultasi Gratis
+        </a>
+      </div>
+    </div>
+    <div class="relative hidden lg:flex justify-center items-center">
+      <div class="floaty w-72 h-72 rounded-3xl glass border-white/10 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-28 w-28 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.611L5 14.5" />
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== KATALOG ===================== -->
+<section id="katalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+  <div class="text-center mb-12">
+    <h2 class="font-display text-2xl md:text-3xl font-bold text-white mb-3">Katalog Jasa Kami</h2>
+    <p class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base">Pilih layanan yang kamu butuhkan, tambahkan ke keranjang brief, lalu ajukan project dalam hitungan menit.</p>
+  </div>
+
+  <div id="katalogGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6"></div>
+</section>
+
+<!-- ===================== TENTANG ===================== -->
+<section id="tentang" class="bg-indigo-950/40 border-y border-white/5">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+    <div class="glass rounded-2xl p-6">
+      <h3 class="font-display text-3xl font-extrabold grad-text mb-1">500+</h3>
+      <p class="text-slate-300 text-sm">Project Selesai</p>
+    </div>
+    <div class="glass rounded-2xl p-6">
+      <h3 class="font-display text-3xl font-extrabold grad-text mb-1">4.9/5</h3>
+      <p class="text-slate-300 text-sm">Rating Kepuasan Klien</p>
+    </div>
+    <div class="glass rounded-2xl p-6">
+      <h3 class="font-display text-3xl font-extrabold grad-text mb-1">24 Jam</h3>
+      <p class="text-slate-300 text-sm">Respon Cepat Admin</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== KONTAK / FOOTER ===================== -->
+<footer id="kontak" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center border-t border-white/10 pt-10">
+    <div>
+      <h3 class="font-display text-xl font-bold text-white mb-2">AS<span class="grad-text">.COM</span></h3>
+      <p class="text-slate-400 text-sm max-w-md mb-2">Partner digital & edukasi untuk mahasiswa, UMKM, dan personal brand. Konsultasi tanpa biaya, kerja rapi, hasil maksimal.</p>
+      <p class="text-slate-400 text-sm mb-3">Jl. Pahlawan 4 Gg. Arjuna, Indramayu, Jawa Barat</p>
+      <a href="https://wa.me/62895405202682?text=Halo%20Admin%20AS.COM%2C%20saya%20ingin%20bertanya." target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-300 hover:text-emerald-200 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.52 0-10 4.48-10 10 0 1.77.46 3.45 1.27 4.9L2 22l5.25-1.38a9.96 9.96 0 004.79 1.22h.01c5.52 0 10-4.48 10-10s-4.48-10-10.01-10zm0 18.2a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 01-1.25-4.34c0-4.52 3.68-8.2 8.2-8.2a8.15 8.15 0 018.2 8.2c0 4.52-3.68 8.2-8.18 8.2zm4.5-6.14c-.25-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.78.96-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.46-1.37-1.7-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.24-.41.08-.16.04-.31-.02-.43-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.42-.55-.42h-.47c-.16 0-.43.06-.65.31s-.86.84-.86 2.05.88 2.38 1 2.55c.12.16 1.73 2.65 4.2 3.71.59.25 1.05.4 1.4.52.59.19 1.13.16 1.55.1.47-.07 1.45-.59 1.66-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.47-.28z"/></svg>
+        0895-4052-02682
+      </a>
+    </div>
+    <div class="md:text-right text-sm text-slate-400">
+      <p>© 2026 AS.COM. Seluruh hak cipta dilindungi.</p>
+      <p class="mt-1">Hubungi kami kapan saja lewat keranjang brief di atas atau WhatsApp.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== CART DRAWER ===================== -->
+<div id="cartDrawer" class="fixed inset-0 z-50 hidden">
+  <div id="cartBackdrop" class="absolute inset-0 modal-backdrop"></div>
+  <div class="absolute right-0 top-0 h-full w-full sm:w-96 bg-slate-900 border-l border-white/10 flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+      <h3 class="font-display font-bold text-lg text-white">Keranjang Brief</h3>
+      <button id="closeCart" type="button" class="p-2 rounded-lg hover:bg-white/10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+    <div id="cartItems" class="flex-1 overflow-y-auto px-5 py-4 space-y-3"></div>
+    <div class="border-t border-white/10 p-5">
+      <div class="flex justify-between text-sm text-slate-300 mb-4">
+        <span>Total Estimasi</span>
+        <span id="cartTotal" class="font-semibold text-white">Rp 0</span>
+      </div>
+      <button id="checkoutBtn" type="button" class="btn-primary w-full text-white font-semibold py-3 rounded-xl">Ajukan Project Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL CHECKOUT ===================== -->
+<div id="checkoutModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div id="checkoutBackdrop" class="absolute inset-0 modal-backdrop"></div>
+  <div class="relative bg-slate-900 border border-white/10 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 md:p-8">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-display text-xl font-bold text-white">Formulir Brief Project</h3>
+      <button id="closeCheckout" type="button" class="p-2 rounded-lg hover:bg-white/10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+    <form id="checkoutForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Nama Lengkap</label>
+        <input required id="inpNama" type="text" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Nama kamu">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Nomor WhatsApp</label>
+        <input required id="inpWa" type="tel" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="08xxxxxxxxxx">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
+        <input required id="inpEmail" type="email" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="email@contoh.com">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-300 mb-1">Deskripsi Tugas / Brief</label>
+        <textarea required id="inpBrief" rows="4" class="w-full rounded-xl bg-slate-800 border border-white/10 px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Jelaskan kebutuhan project kamu..."></textarea>
+      </div>
+      <button type="submit" id="submitBriefBtn" class="btn-primary w-full text-white font-semibold py-3 rounded-xl">Kirim & Lanjut ke WhatsApp</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== MODAL PANEL ADMIN ===================== -->
+<div id="adminModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+  <div id="adminBackdrop" class="absolute inset-0 modal-backdrop"></div>
+  <div class="relative bg-slate-900 border border-white/10 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 md:p-8">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-display text-xl font-bold text-white">Panel Admin — AS.COM</h3>
+      <button id="closeAdmin" type="button" class="p-2 rounded-lg hover:bg-white/10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <div class="flex gap-2 mb-5 border-b border-white/10 pb-3">
+      <button data-tab="katalog" class="adminTabBtn text-sm font-semibold px-3 py-1.5 rounded-lg bg-violet-600 text-white">Kelola Katalog</button>
+      <button data-tab="brief" class="adminTabBtn text-sm font-semibold px-3 py-1.5 rounded-lg text-slate-300 hover:bg-white/10">Brief Masuk</button>
+    </div>
+
+    <!-- TAB KATALOG -->
+    <div id="adminTabKatalog" class="space-y-5">
+      <div class="glass rounded-xl p-4">
+        <h4 class="text-sm font-bold text-white mb-3">Tambah / Edit Jasa</h4>
+        <form id="adminKatalogForm" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input type="hidden" id="admEditId" value="">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-400 mb-1">Nama Jasa</label>
+            <input required id="admNama" type="text" class="w-full rounded-lg bg-slate-800 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Kategori</label>
+            <select id="admKategori" class="w-full rounded-lg bg-slate-800 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+              <option>Website</option>
+              <option>Desain Grafis</option>
+              <option>Joki Tugas</option>
+              <option>Bimbingan Belajar</option>
+              <option>Digital Marketing</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Harga (Rp)</label>
+            <input required id="admHarga" type="number" min="0" class="w-full rounded-lg bg-slate-800 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-400 mb-1">Deskripsi</label>
+            <textarea required id="admDeskripsi" rows="2" class="w-full rounded-lg bg-slate-800 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500"></textarea>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-400 mb-1">URL Gambar (opsional)</label>
+            <input id="admGambar" type="text" placeholder="https://..." class="w-full rounded-lg bg-slate-800 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500">
+          </div>
+          <div class="sm:col-span-2 flex gap-2">
+            <button type="submit" class="btn-primary text-white text-sm font-semibold px-4 py-2 rounded-lg">Simpan Jasa</button>
+            <button type="button" id="admCancelEdit" class="hidden text-sm font-semibold px-4 py-2 rounded-lg border border-white/20 text-slate-200 hover:bg-white/10">Batal Edit</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="adminKatalogList" class="space-y-2"></div>
+    </div>
+
+    <!-- TAB BRIEF MASUK -->
+    <div id="adminTabBrief" class="hidden space-y-2"></div>
+  </div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] hidden">
+  <div class="glass rounded-xl px-5 py-3 text-sm text-white shadow-xl border-violet-500/30"></div>
+</div>
+
+<script>
+/* =========================================================================
+   DAFTAR JASA — EDIT DI SINI SAJA UNTUK TAMBAH / UBAH / HAPUS LAYANAN
+   Tidak perlu database, tidak perlu login. Cukup edit list di bawah,
+   simpan file, lalu upload ulang ke Netlify.
+   - id       : angka unik, jangan sama antar item
+   - gambar   : boleh kosongkan "" kalau belum ada gambar (otomatis pakai placeholder)
+   ========================================================================= */
+const KATALOG = [
+  { id:1, nama:"Pembuatan Website Company Profile", kategori:"Website", harga:750000, deskripsi:"Website resmi untuk bisnis/UMKM, tampilan modern, responsif di HP & PC.", gambar:"" },
+  { id:2, nama:"Pembuatan Toko Online", kategori:"Website", harga:1200000, deskripsi:"Website jualan lengkap dengan katalog produk dan keranjang belanja.", gambar:"" },
+  { id:3, nama:"Desain Logo & Brand Identity", kategori:"Desain Grafis", harga:250000, deskripsi:"Logo profesional plus panduan warna dan font untuk brand kamu.", gambar:"" },
+  { id:4, nama:"Desain Feed & Konten Instagram", kategori:"Desain Grafis", harga:150000, deskripsi:"Konten visual menarik untuk media sosial bisnis kamu.", gambar:"" },
+  { id:5, nama:"Joki Tugas Kuliah", kategori:"Joki Tugas", harga:100000, deskripsi:"Bantuan pengerjaan tugas kuliah, cepat dan rapi sesuai deadline.", gambar:"" },
+  { id:6, nama:"Joki Skripsi Bab 1-5", kategori:"Joki Tugas", harga:2000000, deskripsi:"Pendampingan penyusunan skripsi dari bab 1 sampai bab 5.", gambar:"" },
+  { id:7, nama:"Bimbingan Belajar Matematika", kategori:"Bimbingan Belajar", harga:80000, deskripsi:"Les privat matematika SD-SMA, online maupun offline.", gambar:"" },
+  { id:8, nama:"Konsultasi Digital Marketing", kategori:"Digital Marketing", harga:300000, deskripsi:"Strategi promosi online untuk meningkatkan penjualan bisnis kamu.", gambar:"" }
+];
+
+/* Nomor WhatsApp Admin */
+const ADMIN_WHATSAPP = "62895405202682";
+
+/* ====================================================================
+   LOGIN GOOGLE & AKUN ADMIN
+   - GOOGLE_CLIENT_ID: WAJIB diganti dengan Client ID dari Google Cloud
+     Console (APIs & Services > Credentials > OAuth Client ID > Web
+     application). Tambahkan domain Netlify kamu di "Authorized
+     JavaScript origins". Selama masih placeholder, tombol login akan
+     muncul tapi belum berfungsi.
+   - ADMIN_EMAIL: akun Google yang otomatis dianggap admin begitu login.
+   ==================================================================== */
+const GOOGLE_CLIENT_ID = "GANTI_DENGAN_CLIENT_ID_ANDA.apps.googleusercontent.com";
+const ADMIN_EMAIL = "carmidicomel@gmail.com";
+
+/* ============ STATE ============ */
+let CART = JSON.parse(localStorage.getItem('ascom_cart') || '[]');
+let CURRENT_USER = JSON.parse(localStorage.getItem('ascom_user') || 'null');
+
+/* ============ UTIL ============ */
+function formatRupiah(num){
+  return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
+}
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.querySelector('div').textContent = msg;
+  toast.classList.remove('hidden');
+  setTimeout(()=> toast.classList.add('hidden'), 2800);
+}
+function saveCart(){
+  localStorage.setItem('ascom_cart', JSON.stringify(CART));
+  renderCartBadge();
+  renderCartItems();
+}
+function renderCartBadge(){
+  const totalQty = CART.reduce((a,c)=>a + c.qty, 0);
+  document.getElementById('cartBadge').textContent = totalQty;
+}
+
+/* ============ KATALOG DINAMIS (tersimpan di browser admin) ============
+   Katalog default di atas dipakai sebagai isi awal. Begitu admin
+   menambah/mengedit/menghapus jasa lewat Panel Admin, hasilnya disimpan
+   di localStorage browser admin tsb dan dipakai sebagai sumber data
+   katalog yang tampil ke publik di HP/laptop itu. */
+function getKatalog(){
+  const saved = localStorage.getItem('ascom_katalog');
+  if(saved) return JSON.parse(saved);
+  return JSON.parse(JSON.stringify(KATALOG));
+}
+function saveKatalog(list){
+  localStorage.setItem('ascom_katalog', JSON.stringify(list));
+}
+
+/* ============ BRIEF MASUK (tersimpan di browser admin) ============ */
+function getBriefs(){
+  return JSON.parse(localStorage.getItem('ascom_briefs') || '[]');
+}
+function saveBriefs(list){
+  localStorage.setItem('ascom_briefs', JSON.stringify(list));
+}
+
+/* ============ LOGIN GOOGLE ============ */
+function decodeJwt(token){
+  try{
+    const payload = token.split('.')[1];
+    const json = decodeURIComponent(atob(payload.replace(/-/g,'+').replace(/_/g,'/')).split('').map(c=>
+      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    ).join(''));
+    return JSON.parse(json);
+  }catch(e){ return null; }
+}
+
+function handleGoogleLogin(response){
+  const data = decodeJwt(response.credential);
+  if(!data) return;
+  CURRENT_USER = { name: data.name, email: data.email, picture: data.picture };
+  localStorage.setItem('ascom_user', JSON.stringify(CURRENT_USER));
+  renderAuthArea();
+  if(CURRENT_USER.email === ADMIN_EMAIL){
+    showToast(`Halo Admin, ${data.name}! Panel Admin siap dipakai.`);
+  }else{
+    showToast(`Berhasil login sebagai ${data.name}`);
+  }
+}
+
+function logoutUser(){
+  CURRENT_USER = null;
+  localStorage.removeItem('ascom_user');
+  if(window.google && google.accounts && google.accounts.id){
+    google.accounts.id.disableAutoSelect();
+  }
+  renderAuthArea();
+  showToast('Berhasil logout');
+}
+
+function initGoogleSignIn(){
+  if(!(window.google && google.accounts && google.accounts.id)) return;
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleLogin
+  });
+  const target = document.getElementById('googleBtnSlot');
+  const targetMobile = document.getElementById('googleBtnSlotMobile');
+  if(target){
+    target.innerHTML = '';
+    google.accounts.id.renderButton(target, { theme:'filled_black', size:'medium', shape:'pill', text:'signin_with' });
+  }
+  if(targetMobile){
+    targetMobile.innerHTML = '';
+    google.accounts.id.renderButton(targetMobile, { theme:'filled_black', size:'medium', shape:'pill', text:'signin_with' });
+  }
+}
+
+function authAreaHTML(){
+  if(!CURRENT_USER){
+    return `<div id="googleBtnSlot"></div>`;
+  }
+  const isAdmin = CURRENT_USER.email === ADMIN_EMAIL;
+  return `
+    <div class="flex items-center gap-2">
+      <img src="${CURRENT_USER.picture}" class="h-8 w-8 rounded-full border border-white/20" referrerpolicy="no-referrer">
+      <span class="text-xs text-slate-300 max-w-[100px] truncate">${CURRENT_USER.name}</span>
+      ${isAdmin ? `<button id="openAdminBtn" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-violet-600/30 text-violet-200 hover:bg-violet-600/50">Panel Admin</button>` : ''}
+      <button id="logoutBtn" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-white/20 text-slate-300 hover:bg-white/10">Keluar</button>
+    </div>
+  `;
+}
+
+function renderAuthArea(){
+  document.getElementById('authArea').innerHTML = authAreaHTML();
+  document.getElementById('authAreaMobile').innerHTML = authAreaHTML();
+
+  if(!CURRENT_USER){
+    initGoogleSignIn();
+  }else{
+    document.querySelectorAll('#logoutBtn').forEach(b=> b.addEventListener('click', logoutUser));
+    document.querySelectorAll('#openAdminBtn').forEach(b=> b.addEventListener('click', openAdminModal));
+  }
+}
+
+/* ============ PANEL ADMIN ============ */
+const adminModal = document.getElementById('adminModal');
+document.getElementById('closeAdmin').addEventListener('click', closeAdminModal);
+document.getElementById('adminBackdrop').addEventListener('click', closeAdminModal);
+function closeAdminModal(){
+  adminModal.classList.add('hidden');
+  adminModal.classList.remove('flex');
+}
+function openAdminModal(){
+  if(!CURRENT_USER || CURRENT_USER.email !== ADMIN_EMAIL){
+    showToast('Khusus admin.');
+    return;
+  }
+  adminModal.classList.remove('hidden');
+  adminModal.classList.add('flex');
+  renderAdminKatalog();
+  renderAdminBrief();
+}
+
+document.querySelectorAll('.adminTabBtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.adminTabBtn').forEach(b=>{
+      b.classList.remove('bg-violet-600','text-white');
+      b.classList.add('text-slate-300');
+    });
+    btn.classList.add('bg-violet-600','text-white');
+    btn.classList.remove('text-slate-300');
+    const tab = btn.getAttribute('data-tab');
+    document.getElementById('adminTabKatalog').classList.toggle('hidden', tab !== 'katalog');
+    document.getElementById('adminTabBrief').classList.toggle('hidden', tab !== 'brief');
+  });
+});
+
+function renderAdminKatalog(){
+  const wrap = document.getElementById('adminKatalogList');
+  const list = getKatalog();
+  wrap.innerHTML = '';
+  if(list.length === 0){
+    wrap.innerHTML = `<p class="text-slate-500 text-sm">Belum ada jasa di katalog.</p>`;
+  }
+  list.forEach(item=>{
+    const row = document.createElement('div');
+    row.className = "flex items-center justify-between bg-slate-800/60 rounded-xl p-3 gap-2";
+    row.innerHTML = `
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-white truncate">${item.nama}</p>
+        <p class="text-xs text-slate-400">${item.kategori} · ${formatRupiah(item.harga)}</p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button class="admEditBtn text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20" data-id="${item.id}">Edit</button>
+        <button class="admDelBtn text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30" data-id="${item.id}">Hapus</button>
+      </div>
+    `;
+    wrap.appendChild(row);
+  });
+
+  document.querySelectorAll('.admEditBtn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const item = getKatalog().find(d=> String(d.id) === b.getAttribute('data-id'));
+      if(!item) return;
+      document.getElementById('admEditId').value = item.id;
+      document.getElementById('admNama').value = item.nama;
+      document.getElementById('admKategori').value = item.kategori;
+      document.getElementById('admHarga').value = item.harga;
+      document.getElementById('admDeskripsi').value = item.deskripsi;
+      document.getElementById('admGambar').value = item.gambar || '';
+      document.getElementById('admCancelEdit').classList.remove('hidden');
+      document.getElementById('adminKatalogForm').scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  });
+  document.querySelectorAll('.admDelBtn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const id = b.getAttribute('data-id');
+      const list = getKatalog().filter(d=> String(d.id) !== id);
+      saveKatalog(list);
+      renderAdminKatalog();
+      renderKatalog();
+      showToast('Jasa dihapus dari katalog.');
+    });
+  });
+}
+
+document.getElementById('admCancelEdit').addEventListener('click', ()=>{
+  document.getElementById('adminKatalogForm').reset();
+  document.getElementById('admEditId').value = '';
+  document.getElementById('admCancelEdit').classList.add('hidden');
+});
+
+document.getElementById('adminKatalogForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const editId = document.getElementById('admEditId').value;
+  const list = getKatalog();
+  const payload = {
+    nama: document.getElementById('admNama').value.trim(),
+    kategori: document.getElementById('admKategori').value,
+    harga: Number(document.getElementById('admHarga').value),
+    deskripsi: document.getElementById('admDeskripsi').value.trim(),
+    gambar: document.getElementById('admGambar').value.trim()
+  };
+  if(editId){
+    const idx = list.findIndex(d=> String(d.id) === editId);
+    if(idx > -1) list[idx] = { id: list[idx].id, ...payload };
+  }else{
+    const newId = list.length ? Math.max(...list.map(d=>d.id)) + 1 : 1;
+    list.push({ id:newId, ...payload });
+  }
+  saveKatalog(list);
+  document.getElementById('adminKatalogForm').reset();
+  document.getElementById('admEditId').value = '';
+  document.getElementById('admCancelEdit').classList.add('hidden');
+  renderAdminKatalog();
+  renderKatalog();
+  showToast('Katalog jasa disimpan.');
+});
+
+function renderAdminBrief(){
+  const wrap = document.getElementById('adminTabBrief');
+  const list = getBriefs();
+  wrap.innerHTML = '';
+  if(list.length === 0){
+    wrap.innerHTML = `<p class="text-slate-500 text-sm">Belum ada brief/konsultasi masuk.</p>`;
+    return;
+  }
+  list.slice().reverse().forEach(b=>{
+    const row = document.createElement('div');
+    row.className = "bg-slate-800/60 rounded-xl p-3";
+    row.innerHTML = `
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <p class="text-sm font-semibold text-white">${b.nama} <span class="text-slate-400 font-normal">· ${b.wa}</span></p>
+          <p class="text-xs text-slate-400">${b.email} · ${new Date(b.tanggal).toLocaleString('id-ID')}</p>
+        </div>
+        <button class="admDelBriefBtn text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 shrink-0" data-id="${b.id}">Hapus</button>
+      </div>
+      <p class="text-xs text-slate-300 mt-2 whitespace-pre-line">${b.brief}</p>
+      <p class="text-xs text-violet-300 mt-2 font-semibold">Total: ${formatRupiah(b.total)}</p>
+    `;
+    wrap.appendChild(row);
+  });
+  document.querySelectorAll('.admDelBriefBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const list = getBriefs().filter(b=> String(b.id) !== btn.getAttribute('data-id'));
+      saveBriefs(list);
+      renderAdminBrief();
+    });
+  });
+}
+
+/* ============ NAVBAR MOBILE TOGGLE ============ */
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+let menuOpen = false;
+menuToggle.addEventListener('click', ()=>{
+  menuOpen = !menuOpen;
+  if(menuOpen){
+    mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+    mobileMenu.style.opacity = '1';
+  }else{
+    mobileMenu.style.maxHeight = '0px';
+    mobileMenu.style.opacity = '0';
+  }
+});
+document.querySelectorAll('#mobileMenu a').forEach(a=>{
+  a.addEventListener('click', ()=>{
+    menuOpen = false;
+    mobileMenu.style.maxHeight = '0px';
+    mobileMenu.style.opacity = '0';
+  });
+});
+
+/* ============ VISUAL PER KATEGORI ============
+   Kalau item.gambar diisi dengan URL foto asli (misalnya hasil kerja kamu sendiri
+   yang sudah diupload ke internet), foto itu akan dipakai. Kalau dikosongkan "",
+   otomatis pakai ikon + gradasi warna sesuai kategori di bawah ini — jadi katalog
+   tetap terlihat rapi tanpa perlu gambar dari luar. */
+const KATEGORI_VISUAL = {
+  "Website": {
+    gradient:"from-violet-600/40 via-indigo-700/30 to-slate-900",
+    icon:'<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zM8.25 12h7.5M12 3v18M4.5 8.25h15M4.5 15.75h15"/>'
+  },
+  "Desain Grafis": {
+    gradient:"from-fuchsia-600/40 via-purple-700/30 to-slate-900",
+    icon:'<path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/>'
+  },
+  "Joki Tugas": {
+    gradient:"from-sky-600/40 via-blue-700/30 to-slate-900",
+    icon:'<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>'
+  },
+  "Bimbingan Belajar": {
+    gradient:"from-emerald-600/40 via-teal-700/30 to-slate-900",
+    icon:'<path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 017.231-4.41 60.53 60.53 0 00-.491-6.347m-14.98 0a50.717 50.717 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-14.98 0a50.377 50.377 0 012.658-.814m0 0L12 3.493l7.24 6.14m-14.98 0v6.267a48.653 48.653 0 019.98 0V9.633"/>'
+  },
+  "Digital Marketing": {
+    gradient:"from-amber-500/40 via-orange-600/30 to-slate-900",
+    icon:'<path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>'
+  }
+};
+const DEFAULT_VISUAL = { gradient:"from-violet-600/40 via-indigo-700/30 to-slate-900", icon:'<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>' };
+
+/* ============ RENDER KATALOG (langsung dari list di atas, tanpa database) ============ */
+function renderKatalog(){
+  const grid = document.getElementById('katalogGrid');
+  grid.innerHTML = '';
+  getKatalog().forEach(item=>{
+    const visual = KATEGORI_VISUAL[item.kategori] || DEFAULT_VISUAL;
+    const card = document.createElement('div');
+    card.className = "card-hover glass rounded-2xl overflow-hidden flex flex-col border border-white/10";
+    card.innerHTML = `
+      <div class="h-40 w-full bg-slate-800 overflow-hidden relative">
+        <div class="iconFallback absolute inset-0 flex items-center justify-center bg-gradient-to-br ${visual.gradient}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-violet-200/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">${visual.icon}</svg>
+        </div>
+        ${item.gambar ? `<img src="${item.gambar}" alt="${item.nama}" class="relative h-full w-full object-cover" onerror="this.remove()">` : ''}
+      </div>
+      <div class="p-4 flex flex-col flex-1">
+        <span class="text-[11px] font-semibold text-violet-300 uppercase tracking-wide mb-1">${item.kategori}</span>
+        <h3 class="font-display font-bold text-white text-base mb-1 leading-snug">${item.nama}</h3>
+        <p class="text-slate-400 text-xs mb-3 line-clamp-3 flex-1">${item.deskripsi}</p>
+        <div class="flex items-center justify-between mt-auto">
+          <span class="text-violet-300 font-bold text-sm">${formatRupiah(item.harga)}</span>
+          <button data-id="${item.id}" class="addCartBtn bg-violet-600/20 hover:bg-violet-600/40 text-violet-200 text-xs font-semibold px-3 py-2 rounded-lg transition">+ Keranjang</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.querySelectorAll('.addCartBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.getAttribute('data-id');
+      const produk = getKatalog().find(d=> String(d.id) === String(id));
+      addToCart(produk);
+    });
+  });
+}
+
+/* ============ KERANJANG ============ */
+function addToCart(produk){
+  if(!produk) return;
+  const existing = CART.find(c=> String(c.id) === String(produk.id));
+  if(existing){
+    existing.qty += 1;
+  }else{
+    CART.push({ id: produk.id, nama_jasa: produk.nama, harga: produk.harga, qty: 1 });
+  }
+  saveCart();
+  showToast(`"${produk.nama}" ditambahkan ke keranjang`);
+}
+
+function removeFromCart(id){
+  CART = CART.filter(c=> String(c.id) !== String(id));
+  saveCart();
+}
+
+function changeQty(id, delta){
+  const item = CART.find(c=> String(c.id) === String(id));
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0){
+    removeFromCart(id);
+  }else{
+    saveCart();
+  }
+}
+
+function renderCartItems(){
+  const wrap = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  wrap.innerHTML = '';
+  if(CART.length === 0){
+    wrap.innerHTML = `<p class="text-slate-500 text-sm text-center mt-10">Keranjang brief masih kosong.</p>`;
+  }
+  let total = 0;
+  CART.forEach(item=>{
+    total += item.harga * item.qty;
+    const row = document.createElement('div');
+    row.className = "flex items-center justify-between bg-slate-800/60 rounded-xl p-3";
+    row.innerHTML = `
+      <div class="flex-1 pr-2">
+        <p class="text-sm font-semibold text-white leading-tight">${item.nama_jasa}</p>
+        <p class="text-xs text-slate-400">${formatRupiah(item.harga)} x ${item.qty}</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="qtyBtn w-7 h-7 rounded-lg bg-white/10 text-white" data-id="${item.id}" data-delta="-1">-</button>
+        <span class="text-sm text-white w-5 text-center">${item.qty}</span>
+        <button class="qtyBtn w-7 h-7 rounded-lg bg-white/10 text-white" data-id="${item.id}" data-delta="1">+</button>
+      </div>
+    `;
+    wrap.appendChild(row);
+  });
+  totalEl.textContent = formatRupiah(total);
+
+  document.querySelectorAll('.qtyBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      changeQty(btn.getAttribute('data-id'), Number(btn.getAttribute('data-delta')));
+    });
+  });
+}
+
+/* ============ CART DRAWER TOGGLE ============ */
+const cartDrawer = document.getElementById('cartDrawer');
+document.getElementById('cartBtn').addEventListener('click', ()=>{
+  renderCartItems();
+  cartDrawer.classList.remove('hidden');
+});
+document.getElementById('closeCart').addEventListener('click', ()=> cartDrawer.classList.add('hidden'));
+document.getElementById('cartBackdrop').addEventListener('click', ()=> cartDrawer.classList.add('hidden'));
+
+/* ============ MODAL CHECKOUT TOGGLE ============ */
+const checkoutModal = document.getElementById('checkoutModal');
+document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+  if(CART.length === 0){
+    showToast('Keranjang masih kosong, tambahkan jasa terlebih dahulu.');
+    return;
+  }
+  cartDrawer.classList.add('hidden');
+  checkoutModal.classList.remove('hidden');
+  checkoutModal.classList.add('flex');
+});
+document.getElementById('closeCheckout').addEventListener('click', closeCheckoutModal);
+document.getElementById('checkoutBackdrop').addEventListener('click', closeCheckoutModal);
+function closeCheckoutModal(){
+  checkoutModal.classList.add('hidden');
+  checkoutModal.classList.remove('flex');
+}
+
+/* ============ SUBMIT BRIEF -> LANGSUNG KE WHATSAPP (tanpa database) ============ */
+document.getElementById('checkoutForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const nama = document.getElementById('inpNama').value.trim();
+  const wa = document.getElementById('inpWa').value.trim();
+  const email = document.getElementById('inpEmail').value.trim();
+  const brief = document.getElementById('inpBrief').value.trim();
+
+  if(!nama || !wa || !email || !brief){
+    showToast('Mohon lengkapi semua data.');
+    return;
+  }
+
+  const itemsText = CART.map(c=> `- ${c.nama_jasa} (x${c.qty}) : ${formatRupiah(c.harga * c.qty)}`).join('\n');
+  const totalHarga = CART.reduce((a,c)=> a + (c.harga * c.qty), 0);
+
+  const briefs = getBriefs();
+  briefs.push({
+    id: Date.now(),
+    nama, wa, email, brief,
+    items: itemsText,
+    total: totalHarga,
+    tanggal: new Date().toISOString()
+  });
+  saveBriefs(briefs);
+
+  const pesanWA = encodeURIComponent(
+`Halo Admin AS.COM, saya ingin mengajukan project baru:
+
+*Nama:* ${nama}
+*Email:* ${email}
+*No. WhatsApp:* ${wa}
+
+*Detail Jasa:*
+${itemsText}
+*Total Estimasi:* ${formatRupiah(totalHarga)}
+
+*Deskripsi Brief:*
+${brief}
+
+Mohon informasi selanjutnya, terima kasih!`
+  );
+
+  CART = [];
+  saveCart();
+  closeCheckoutModal();
+  document.getElementById('checkoutForm').reset();
+  showToast('Brief berhasil disiapkan! Mengalihkan ke WhatsApp...');
+
+  setTimeout(()=>{
+    window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${pesanWA}`, '_blank');
+  }, 800);
+});
+
+/* ============ INIT ============ */
+renderCartBadge();
+renderKatalog();
+renderAuthArea();
+window.addEventListener('load', ()=> setTimeout(renderAuthArea, 300));
+</script>
+</body>
+</html>
